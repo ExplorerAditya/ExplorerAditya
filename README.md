@@ -1,12 +1,12 @@
 
 
 <h1 align="center">
-  <img src="https://readme-typing-svg.herokuapp.com/?font=Righteous&size=38&pause=1000&color=36BCF7&center=true&vCenter=true&width=900&height=80&lines=Hello,+Everyone!+👋;Welcome+to+my+GitHub+Universe!+🌌;I'm+Aditya,+a+Software+Developer+💻;Passionate+about+coding+and+scalable+systems;Tech+Enthusiast+and+Problem+Solver;System+Admin+%26+Database+Expert;Always+building,+exploring,+and+growing+🚀">
+  <img src="https://readme-typing-svg.herokuapp.com/?font=Righteous&size=38&pause=1000&color=36BCF7&center=true&vCenter=true&width=900&height=80&lines=Hello,+Everyone!+👋;Welcome+to+my+GitHub+Universe!+🌌;I'm+Aditya,+an+Explorer+💻;Passionate+about+learning+and+exploration;Tech+Enthusiast+and+Problem+Solver;Always+building,+exploring,+and+growing+🚀">
 </h1>
 
 
 
-<h3 align="center">A passionate Software Developer from India</h3>
+<h3 align="center">A passionate Student from India</h3>
 
 <br/>
 
