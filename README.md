@@ -58,8 +58,8 @@
 </h2>
 <br/>
 <div align="center">
-    <img src="https://skillicons.dev/icons?i=html,css,vscode,bootstrap,github,tailwind,git" />
-    <img src="https://skillicons.dev/icons?i=python,javascript,c,java,mysql,postman,vercel,vite" /><br>
+    <img src="https://skillicons.dev/icons?i=html,css,javascript,vscode,github,git" />
+    <img src="https://skillicons.dev/icons?i=python,java,mysql,idea,pycharm" /><br>
 </div>
 
 <br/>
