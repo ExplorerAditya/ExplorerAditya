@@ -48,7 +48,6 @@
   <a href="#"><img src="https://img.shields.io/github/stars/ExplorerAditya?style=for-the-badge&color=blue" alt="GitHub Stars"/></a>
 </div>
 
-<img src="https://www.animatedimages.org/data/media/562/animated-line-image-0184.gif" width="1920" />
  
  <!--Languages and Frameworks-->
  
@@ -64,7 +63,6 @@
 </div>
 
 <br/>
-<img src="https://www.animatedimages.org/data/media/562/animated-line-image-0184.gif" width="1920" />
 
 
 
@@ -87,7 +85,6 @@
 </p>
 </div>
 
-<img src="https://www.animatedimages.org/data/media/562/animated-line-image-0184.gif" width="1920" />
 
 <!--Achievements and Awards-->
 
@@ -95,8 +92,6 @@
 <div align="center">
   <img src="https://github-profile-trophy.vercel.app/?username=ExplorerAditya&theme=radical&row=1&column=7" alt="GitHub Trophies" />
 </div>
-
-<img src="https://www.animatedimages.org/data/media/562/animated-line-image-0184.gif" width="1920" />
 
 <!--Projects Showcase-->
 
@@ -112,7 +107,6 @@
 </div>
 
 <br/> <br/>
-<img src="https://www.animatedimages.org/data/media/562/animated-line-image-0184.gif" width="1920" />
 
 <!--Footer Part-->
 
