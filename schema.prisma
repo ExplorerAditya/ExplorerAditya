@@ -1,0 +1,1191 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== SUPER ADMIN MODELS ====================
+
+model super_admin_profile {
+  id         Int                      @id @default(autoincrement())
+  full_name  String
+  email      String                   @unique
+  photo      Bytes?
+  contact_no String
+  created_at DateTime?                @default(now()) @db.Timestamp(6)
+  auth       super_admin_auth?
+  logs       super_admin_log[]
+  messages   support_ticket_message[] @relation("SuperAdminMessages")
+}
+
+model super_admin_auth {
+  id         Int                 @id
+  email      String              @unique
+  password   String
+  last_login DateTime?           @db.Timestamp(6)
+  profile    super_admin_profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_super_admin_profile")
+}
+
+model college_registry {
+  id                   Int               @id @default(autoincrement())
+  college_name         String
+  status               String            @default("Active")
+  clg_admin_contact_no String
+  created_at           DateTime?         @default(now()) @db.Timestamp(6)
+  updated_at           DateTime?         @default(now()) @updatedAt @db.Timestamp(6)
+  admin                college_admin?
+  support_tickets      support_ticket[]
+  students             student_profile[] @relation("StudentCollege")
+  teachers             teacher_profile[] @relation("TeacherCollege")
+  classes              class_map[]       @relation("ClassCollege")
+  tests                test[]            @relation("TestCollege")
+  questions            question[]        @relation("QuestionCollege")
+  notes                notes[]           @relation("NotesCollege")
+  interviews           interview[]       @relation("InterviewCollege")
+}
+
+model college_admin {
+  id         Int     @id @default(autoincrement())
+  full_name  String
+  email      String  @unique
+  password   String?
+  contact_no String? @db.VarChar
+  college_id Int     @unique
+
+  // Resource Limits
+  is_free Boolean @default(true)
+
+  // Student limits
+  student_limit Int @default(100)
+  student_used  Int @default(0)
+
+  // Teacher limits
+  teacher_limit Int @default(100)
+  teacher_used  Int @default(0)
+
+  // Question limits
+  question_limit Int @default(20)
+  question_used  Int @default(0)
+
+  // Test limits
+  test_limit      Int                      @default(20)
+  test_used       Int                      @default(0)
+  college         college_registry         @relation(fields: [college_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_college_registry")
+  created_tickets support_ticket[]
+  messages        support_ticket_message[] @relation("AdminMessages")
+  limit_requests  limit_request[]
+}
+
+model super_admin_log {
+  id             Int                 @id @default(autoincrement())
+  action         String
+  description    Json?               @db.Json
+  timestamp      DateTime?           @default(now()) @db.Timestamp(6)
+  super_admin_id Int
+  super_admin    super_admin_profile @relation(fields: [super_admin_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_super_admin_log_profile")
+}
+
+model ClientRequest {
+  id           Int      @id @default(autoincrement())
+  full_name    String
+  email        String
+  organization String?
+  role         String?
+  phone        String?
+  message      String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  status       Status   @default(pending)
+
+  @@map("client_requests")
+}
+
+enum Status {
+  pending
+  contacted
+  completed
+}
+
+// ==================== SUPPORT TICKET MODELS ====================
+
+model support_ticket {
+  id           Int                      @id @default(autoincrement())
+  subject      String
+  description  String
+  priority     SupportPriority          @default(medium)
+  status       SupportStatus            @default(open)
+  category     String?
+  college_id   Int
+  org_admin_id Int
+  created_at   DateTime                 @default(now()) @db.Timestamp(6)
+  updated_at   DateTime                 @default(now()) @updatedAt @db.Timestamp(6)
+  college      college_registry         @relation(fields: [college_id], references: [id], onDelete: Cascade)
+  org_admin    college_admin            @relation(fields: [org_admin_id], references: [id], onDelete: SetNull)
+  messages     support_ticket_message[]
+
+  @@index([college_id, status])
+  @@index([org_admin_id])
+  @@map("support_ticket")
+}
+
+model support_ticket_message {
+  id              Int                  @id @default(autoincrement())
+  ticket_id       Int
+  sender_type     SupportSender        @default(org_admin)
+  sender_admin_id Int?
+  sender_super_id Int?
+  message         String
+  created_at      DateTime             @default(now()) @db.Timestamp(6)
+  ticket          support_ticket       @relation(fields: [ticket_id], references: [id], onDelete: Cascade)
+  sender_admin    college_admin?       @relation("AdminMessages", fields: [sender_admin_id], references: [id], onDelete: SetNull)
+  sender_super    super_admin_profile? @relation("SuperAdminMessages", fields: [sender_super_id], references: [id], onDelete: SetNull)
+
+  @@index([ticket_id])
+  @@map("support_ticket_message")
+}
+
+enum SupportPriority {
+  low
+  medium
+  high
+  urgent
+}
+
+enum SupportStatus {
+  open
+  in_progress
+  resolved
+  closed
+}
+
+enum SupportSender {
+  org_admin
+  super_admin
+}
+
+// ==================== LIMIT REQUEST MODELS ====================
+
+model limit_request {
+  id              Int           @id @default(autoincrement())
+  college_id      Int
+  admin_id        Int
+  request_type    LimitType
+  current_limit   Int
+  requested_limit Int
+  reason          String?
+  status          RequestStatus @default(pending)
+  created_at      DateTime      @default(now()) @db.Timestamp(6)
+  updated_at      DateTime      @default(now()) @updatedAt @db.Timestamp(6)
+  reviewed_by     Int?
+  reviewed_at     DateTime?     @db.Timestamp(6)
+  admin           college_admin @relation(fields: [admin_id], references: [id], onDelete: Cascade)
+
+  @@index([admin_id, status])
+  @@map("limit_request")
+}
+
+enum LimitType {
+  STUDENT
+  TEACHER
+  QUESTION
+  TEST
+}
+
+enum RequestStatus {
+  pending
+  approved
+  rejected
+}
+
+// ==================== COLLEGE-SPECIFIC MODELS ====================
+
+model org_admin_profile {
+  id                Int                 @id @default(autoincrement())
+  full_name         String              @db.VarChar(100)
+  email             String              @unique @db.VarChar(255)
+  role              String              @db.VarChar(50)
+  contact_no        String?             @db.VarChar(20)
+  profile_image_url Bytes?
+  college_id        Int                 @unique
+  college_name      String              @default("") @db.VarChar(255)
+  created_at        DateTime            @default(now()) @db.Timestamp(6)
+  updated_at        DateTime            @default(now()) @db.Timestamp(6)
+  auth_user         admin_auth_users?
+  logs              college_admin_log[]
+
+  // Relations for created resources
+  created_questions  question[]  @relation("AdminQuestions")
+  created_tests      test[]      @relation("AdminTests")
+  created_interviews interview[] @relation("AdminInterviews")
+  submissions        code_submission[]
+  course_enrollments AdminCourseEnrollment[]
+  module_progress    AdminModuleProgress[]
+  submodule_progress AdminSubModuleProgress[]
+  cc_attempts        CcProblemAttempt[]         @relation("AdminCcAttempts")
+
+  @@map("org_admin_profile")
+}
+
+model college_admin_log {
+  id               Int               @id @default(autoincrement())
+  action           String
+  description      Json?             @db.Json
+  timestamp        DateTime?         @default(now()) @db.Timestamp(6)
+  college_admin_id Int
+  college_admin    org_admin_profile @relation(fields: [college_admin_id], references: [id], onDelete: Cascade, map: "fk_college_admin_log_profile")
+
+  @@map("college_admin_log")
+}
+
+model admin_auth_users {
+  id         Int               @id @default(autoincrement())
+  email      String            @unique @db.VarChar(255)
+  hashed_pwd String            @db.VarChar(255)
+  role       String            @default("admin") @db.VarChar(50)
+  profile_id Int               @unique
+  last_login DateTime?         @db.Timestamp(6)
+  created_at DateTime          @default(now()) @db.Timestamp(6)
+  profile    org_admin_profile @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+
+  @@map("admin_auth_users")
+}
+
+model student_auth_users {
+  id         Int             @id @default(autoincrement())
+  email      String          @unique @db.VarChar(255)
+  hashed_pwd String          @db.VarChar(255)
+  role       String          @default("student") @db.VarChar(50)
+  profile_id Int             @unique
+  last_login DateTime?       @db.Timestamp(6)
+  created_at DateTime        @default(now()) @db.Timestamp(6)
+  profile    student_profile @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+
+  @@map("student_auth_users")
+}
+
+model teacher_auth_users {
+  id         Int             @id @default(autoincrement())
+  email      String          @unique @db.VarChar(255)
+  hashed_pwd String          @db.VarChar(255)
+  role       String          @default("teacher") @db.VarChar(50)
+  profile_id Int             @unique
+  last_login DateTime?       @db.Timestamp(6)
+  created_at DateTime        @default(now()) @db.Timestamp(6)
+  profile    teacher_profile @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+
+  @@map("teacher_auth_users")
+}
+
+model student_profile {
+  id                Int                 @id @default(autoincrement())
+  full_name         String              @db.VarChar(100)
+  email             String              @unique @db.VarChar(255)
+  contact_no        String              @db.VarChar(100)
+  system_id         String              @db.VarChar(50)
+  roll_no           String              @db.VarChar(50)
+  cgpa              Float?
+  profile_image_url Bytes?
+  college_id        Int
+  created_at        DateTime            @default(now()) @db.Timestamp(6)
+  updated_at        DateTime            @default(now()) @db.Timestamp(6)
+  class_id          Int?
+  auth_user         student_auth_users?
+  college           college_registry    @relation("StudentCollege", fields: [college_id], references: [id], onDelete: Cascade)
+  class             class_map?          @relation(fields: [class_id], references: [id], onDelete: Restrict)
+  code_submissions  code_submission[]
+  test_attempt_sessions  test_attempt_session[]
+  test_proctoring_events test_proctoring_event[]
+  test_coding_submissions test_coding_submission[]
+  course_enrollments StudentCourseEnrollment[]
+  module_progress    StudentModuleProgress[]
+  submodule_progress StudentSubModuleProgress[]
+  cc_attempts        CcProblemAttempt[]         @relation("StudentCcAttempts")
+
+  @@index([college_id])
+  @@map("student_profile")
+}
+
+model teacher_profile {
+  id                 Int                 @id @default(autoincrement())
+  full_name          String              @db.VarChar(100)
+  email              String              @unique @db.VarChar(255)
+  employee_id        String              @unique @db.VarChar(50)
+  contact_no         String?             @db.VarChar(50)
+  job_role           String?             @db.VarChar(100)
+  profile_image_url  Bytes?
+  college_id         Int
+  created_at         DateTime            @default(now()) @db.Timestamp(6)
+  updated_at         DateTime            @default(now()) @db.Timestamp(6)
+  status             String?             @default("Active") @db.VarChar
+  uploaded_notes     notes[]             @relation("TeacherNotes")
+  created_questions  question[]          @relation("TeacherQuestions")
+  auth_user          teacher_auth_users?
+  created_tests      test[]              @relation("TeacherTests")
+  classes            class_map[]         @relation("TeacherClasses")
+  created_interviews interview[]         @relation("TeacherInterviews")
+  created_problems   coding_problem[]
+  college            college_registry    @relation("TeacherCollege", fields: [college_id], references: [id], onDelete: Cascade)
+  submissions        code_submission[]
+  course_enrollments TeacherCourseEnrollment[]
+  module_progress    TeacherModuleProgress[]
+  submodule_progress TeacherSubModuleProgress[]
+  cc_attempts        CcProblemAttempt[]         @relation("TeacherCcAttempts")
+
+  @@index([college_id])
+  @@map("teacher_profile")
+}
+
+model interview {
+  id                  Int                          @id @default(autoincrement())
+  interview_type      String                       @db.VarChar(100)
+  title               String                       @db.VarChar(255)
+  description         String?
+  date_time           DateTime                     @db.Timestamp(6)
+  duration            Int
+  google_meet_url     String?                      @db.VarChar(500)
+  college_id          Int
+  created_by_id       Int?
+  created_by_admin_id Int?
+  created_by          teacher_profile?             @relation("TeacherInterviews", fields: [created_by_id], references: [id], onDelete: Cascade)
+  created_by_admin    org_admin_profile?           @relation("AdminInterviews", fields: [created_by_admin_id], references: [id], onDelete: Cascade)
+  class_links         interview_class_assignment[] @relation("InterviewClassLinks")
+  college             college_registry             @relation("InterviewCollege", fields: [college_id], references: [id], onDelete: Cascade)
+  created_at          DateTime                     @default(now()) @db.Timestamp(6)
+  updated_at          DateTime                     @default(now()) @db.Timestamp(6)
+
+  @@index([college_id])
+  @@map("interview")
+}
+
+model interview_class_assignment {
+  id           Int       @id @default(autoincrement())
+  interview_id Int
+  class_id     Int
+  interview    interview @relation("InterviewClassLinks", fields: [interview_id], references: [id], onDelete: Cascade)
+  class        class_map @relation("ClassInterviewLinks", fields: [class_id], references: [id], onDelete: Cascade)
+
+  @@unique([interview_id, class_id])
+  @@map("interview_class_assignment")
+}
+
+model class_map {
+  id               Int                          @id @default(autoincrement())
+  name             String                       @db.VarChar(100)
+  department_name  String                       @db.VarChar(100)
+  specialization   String?                      @db.VarChar(100)
+  year             Int
+  college_id       Int
+  created_at       DateTime                     @default(now()) @db.Timestamp(6)
+  updated_at       DateTime                     @default(now()) @db.Timestamp(6)
+  students         student_profile[]
+  teachers         teacher_profile[]            @relation("TeacherClasses")
+  note_links       note_class_assignment[]      @relation("ClassNoteLinks")
+  test_assignments test_assignment[]
+  interview_links  interview_class_assignment[] @relation("ClassInterviewLinks")
+  college          college_registry             @relation("ClassCollege", fields: [college_id], references: [id], onDelete: Cascade)
+
+  @@unique([name, department_name, specialization, year, college_id])
+  @@index([college_id])
+  @@map("class_map")
+}
+
+model address {
+  id             Int      @id @default(autoincrement())
+  postal_code    String?  @db.VarChar(10)
+  street_address String   @db.VarChar(255)
+  city           String   @db.VarChar(100)
+  state          String   @db.VarChar(100)
+  country        String   @db.VarChar(100)
+  created_at     DateTime @default(now()) @db.Timestamp(6)
+  updated_at     DateTime @default(now()) @db.Timestamp(6)
+
+  @@map("address")
+}
+
+model notes {
+  id             Int                     @id @default(autoincrement())
+  title          String
+  subject        String
+  description    String?
+  file_url       String
+  uploaded_at    DateTime                @default(now())
+  is_active      Boolean                 @default(true)
+  college_id     Int
+  uploaded_by_id Int
+  uploaded_by    teacher_profile         @relation("TeacherNotes", fields: [uploaded_by_id], references: [id], onDelete: Cascade)
+  class_links    note_class_assignment[] @relation("NoteClassLinks")
+  college        college_registry        @relation("NotesCollege", fields: [college_id], references: [id], onDelete: Cascade)
+
+  @@index([college_id])
+  @@map("notes")
+}
+
+model note_class_assignment {
+  id       Int       @id @default(autoincrement())
+  note_id  Int
+  class_id Int
+  note     notes     @relation("NoteClassLinks", fields: [note_id], references: [id], onDelete: Cascade)
+  class    class_map @relation("ClassNoteLinks", fields: [class_id], references: [id], onDelete: Cascade)
+
+  @@unique([note_id, class_id])
+  @@map("note_class_assignment")
+}
+
+// ====================================================================================
+// ENVIRONMENT 1 — CODING / EXAM PLATFORM
+// Tables: test, test_question, test_assignment, test_coding_problem, test_student_override,
+//         test_result, test_response, test_attempt_session, test_proctoring_event,
+//         test_coding_submission, question, mcq_option, mcq_correct_option,
+//         coding_problem, code_submission, language, coding_problem_template
+// These tables are NEVER used by the Curriculum environment.
+// ====================================================================================
+
+model test {
+  id                        Int                   @id @default(autoincrement())
+  title                     String                @db.VarChar(255)
+  description               String?
+  topics                    String[]
+  schedule_start_at         DateTime?             @db.Timestamp(6)
+  schedule_duration_minutes Int?
+  schedule_auto_close       Boolean?              @default(false)
+  mode                      TestMode              @default(DRAFT)
+  college_id                Int
+  created_at                DateTime              @default(now()) @db.Timestamp(6)
+  updated_at                DateTime              @default(now()) @db.Timestamp(6)
+  created_by_id             Int?
+  created_by_admin_id       Int?
+  created_by                teacher_profile?      @relation("TeacherTests", fields: [created_by_id], references: [id], onDelete: Cascade)
+  created_by_admin          org_admin_profile?    @relation("AdminTests", fields: [created_by_admin_id], references: [id], onDelete: Cascade)
+  assignments               test_assignment[]
+  questions                 test_question[]
+  coding_problems           test_coding_problem[]
+  attempt_sessions          test_attempt_session[]
+  proctoring_events         test_proctoring_event[]
+  coding_submissions        test_coding_submission[]
+  college                   college_registry      @relation("TestCollege", fields: [college_id], references: [id], onDelete: Cascade)
+
+  @@index([college_id])
+  @@map("test")
+}
+
+model test_question {
+  id          Int      @id @default(autoincrement())
+  test_id     Int
+  question_id Int
+  question    question @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  test        test     @relation(fields: [test_id], references: [id], onDelete: Cascade)
+
+  @@unique([test_id, question_id])
+  @@map("test_question")
+}
+
+model test_assignment {
+  id       Int       @id @default(autoincrement())
+  test_id  Int
+  class_id Int
+  class    class_map @relation(fields: [class_id], references: [id], onDelete: Cascade)
+  test     test      @relation(fields: [test_id], references: [id], onDelete: Cascade)
+
+  @@unique([test_id, class_id])
+  @@map("test_assignment")
+}
+
+model question {
+  id                  Int                  @id @default(autoincrement())
+  created_by_id       Int?
+  created_by_admin_id Int?
+  title               String               @db.VarChar(255)
+  marks               Int
+  difficulty          String?
+  explanation         String?
+  image_url           String?
+  college_id          Int
+  mcq_correct         mcq_correct_option[]
+  mcq_options         mcq_option[]
+  created_by          teacher_profile?     @relation("TeacherQuestions", fields: [created_by_id], references: [id], onDelete: Cascade)
+  created_by_admin    org_admin_profile?   @relation("AdminQuestions", fields: [created_by_admin_id], references: [id], onDelete: Cascade)
+  test_questions      test_question[]
+  college             college_registry     @relation("QuestionCollege", fields: [college_id], references: [id], onDelete: Cascade)
+
+  @@index([college_id])
+  @@map("question")
+}
+
+model mcq_option {
+  id              Int                  @id @default(autoincrement())
+  question_id     Int
+  text            String
+  correct_options mcq_correct_option[]
+  question        question             @relation(fields: [question_id], references: [id], onDelete: Cascade)
+
+  @@map("mcq_option")
+}
+
+model mcq_correct_option {
+  question_id Int
+  option_id   Int
+  option      mcq_option @relation(fields: [option_id], references: [id], onDelete: Cascade)
+  question    question   @relation(fields: [question_id], references: [id], onDelete: Cascade)
+
+  @@id([question_id, option_id])
+  @@map("mcq_correct_option")
+}
+
+model test_coding_problem {
+  id             Int            @id @default(autoincrement())
+  test_id        Int
+  coding_q_id    Int
+  test           test           @relation(fields: [test_id], references: [id], onDelete: Cascade)
+  coding_problem coding_problem @relation(fields: [coding_q_id], references: [id], onDelete: Cascade)
+
+  @@unique([test_id, coding_q_id])
+  @@map("test_coding_problem")
+}
+
+model test_student_override {
+  id                Int       @id @default(autoincrement())
+  test_id           Int
+  student_id        Int
+  can_retake        Boolean   @default(true)
+  reason            String?   @db.VarChar(500)
+  granted_by_id     Int
+  granted_at        DateTime  @default(now()) @db.Timestamp(6)
+  expires_at        DateTime? @db.Timestamp(6)
+  is_suspended      Boolean   @default(false)
+  suspension_reason String?   @db.VarChar(500)
+  suspended_at      DateTime? @db.Timestamp(6)
+
+  @@unique([test_id, student_id])
+  @@index([test_id])
+  @@index([student_id])
+  @@map("test_student_override")
+}
+
+model test_result {
+  id           Int      @id @default(autoincrement())
+  test_id      Int
+  student_id   Int
+  total_score  Float    @default(0)
+  submitted_at DateTime @default(now())
+
+  responses test_response[]
+
+  @@unique([test_id, student_id])
+}
+
+model test_response {
+  id                  Int      @id @default(autoincrement())
+  test_result_id      Int
+  question_id         Int?
+  selected_option_ids Int[]
+  is_correct          Boolean?
+  marks_awarded       Float?   @default(0)
+  coding_q_id         Int?
+  is_coding_correct   Boolean? @default(false)
+
+  result test_result @relation(fields: [test_result_id], references: [id], onDelete: Cascade)
+}
+
+model test_attempt_session {
+  id                 Int                @id @default(autoincrement())
+  test_id            Int
+  student_id         Int
+  started_at         DateTime           @default(now()) @db.Timestamp(6)
+  ended_at           DateTime?          @db.Timestamp(6)
+  current_section    TestAttemptSection @default(MCQ)
+  mcq_started_at     DateTime?          @db.Timestamp(6)
+  mcq_ended_at       DateTime?          @db.Timestamp(6)
+  coding_started_at  DateTime?          @db.Timestamp(6)
+  coding_ended_at    DateTime?          @db.Timestamp(6)
+  last_heartbeat_at  DateTime?          @db.Timestamp(6)
+
+  test    test            @relation(fields: [test_id], references: [id], onDelete: Cascade)
+  student student_profile @relation(fields: [student_id], references: [id], onDelete: Cascade)
+
+  @@unique([test_id, student_id])
+  @@index([test_id])
+  @@index([student_id])
+  @@map("test_attempt_session")
+}
+
+model test_proctoring_event {
+  id         Int                 @id @default(autoincrement())
+  test_id    Int
+  student_id Int
+  type       ProctoringEventType
+  message    String?
+  meta       Json?               @db.Json
+  created_at DateTime            @default(now()) @db.Timestamp(6)
+
+  test    test            @relation(fields: [test_id], references: [id], onDelete: Cascade)
+  student student_profile @relation(fields: [student_id], references: [id], onDelete: Cascade)
+
+  @@index([test_id])
+  @@index([student_id])
+  @@index([test_id, student_id])
+  @@map("test_proctoring_event")
+}
+
+model test_coding_submission {
+  id                  Int       @id @default(autoincrement())
+  test_id             Int
+  student_id          Int
+  coding_q_id         Int
+  language_id         Int
+  attempt_no          Int       @default(1)
+  source_code         String
+  status_id           Int?
+  status_desc         String?
+  verdict             CodingVerdict?
+  stdout              String?
+  stderr              String?
+  compile_output      String?
+  submitted_at        DateTime  @default(now()) @db.Timestamp(6)
+  awarded_marks       Float?    @default(0)
+  awarded_at          DateTime? @db.Timestamp(6)
+  passed_total        Int?
+  total               Int?
+  passed_visible      Int?
+  total_visible       Int?
+  passed_hidden       Int?
+  total_hidden        Int?
+  failed_testcase_index Int?
+  failed_input        String?
+  expected_output     String?
+  actual_output       String?
+  error_message       String?
+
+  test    test            @relation(fields: [test_id], references: [id], onDelete: Cascade)
+  student student_profile @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  problem coding_problem  @relation(fields: [coding_q_id], references: [id], onDelete: Cascade)
+  language language       @relation(fields: [language_id], references: [id], onDelete: Cascade)
+
+  @@index([test_id])
+  @@index([student_id])
+  @@index([coding_q_id])
+  @@index([test_id, student_id])
+  @@index([test_id, student_id, coding_q_id])
+  @@map("test_coding_submission")
+}
+
+enum TestMode {
+  DRAFT
+  LIVE
+}
+
+enum TestAttemptSection {
+  MCQ
+  CODING
+  SUBMITTED
+}
+
+enum ProctoringEventType {
+  FULLSCREEN_EXIT
+  TAB_SWITCH
+  WINDOW_BLUR
+  DEVTOOLS
+  COPY_PASTE
+  KEYBOARD_SHORTCUT
+  RIGHT_CLICK
+  MULTIPLE_MONITORS
+}
+
+enum CodingVerdict {
+  ACCEPTED
+  WRONG_ANSWER
+  TIME_LIMIT_EXCEEDED
+  RUNTIME_ERROR
+  COMPILE_ERROR
+  INTERNAL_ERROR
+}
+
+// ==================== CODING PROBLEM & EDITOR (Env 1) ====================
+
+
+model coding_problem {
+  id                   Int               @id @default(autoincrement())
+  title                String            @unique
+  description          String?
+  difficulty           Difficulty        @default(EASY)
+  tags                 String[]          @default([])
+  created_by_id        Int
+  created_at           DateTime          @default(now())
+  updated_at           DateTime          @default(now())
+  page_number          Int?
+  no_similar_questions Int?
+  acceptance           Decimal?          @db.Decimal
+  accepted             Int?              @default(0)
+  submission           Int?              @default(0)
+  likes                Int?              @default(0)
+  dislikes             Int?              @default(0)
+  similar_questions    String[]          @db.VarChar
+  test_cases           Json?             // Stores array of { input: string, output: string, is_hidden: boolean }
+  submissions          code_submission[]
+  test_submissions      test_coding_submission[]
+  templates            coding_problem_template[]
+  created_by           teacher_profile   @relation(fields: [created_by_id], references: [id], onDelete: Cascade)
+  test_problems        test_coding_problem[]
+
+  @@map("coding_problem")
+}
+
+model code_submission {
+  id              Int               @id @default(autoincrement())
+  problem_id      Int
+  source_code     String
+  language_id     Int
+  token           String?           @unique
+  status_id       Int?
+  status_desc     String?
+  stdout          String?
+  stderr          String?
+  compile_output  String?
+  expected_output String?
+  time            String?
+  memory          Int?
+  is_test_run     Boolean           @default(false)
+  score           Float?            @default(0)
+  created_at      DateTime          @default(now())
+  type            String?           // e.g. "student", "teacher", "admin" - purely informational or for filtering
+  
+  // Polymorphic relations
+  student_id      Int?
+  teacher_id      Int?
+  admin_id        Int?
+
+  problem         coding_problem    @relation(fields: [problem_id], references: [id], onDelete: Cascade)
+  student         student_profile?  @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  teacher         teacher_profile?  @relation(fields: [teacher_id], references: [id], onDelete: Cascade)
+  admin           org_admin_profile? @relation(fields: [admin_id], references: [id], onDelete: Cascade)
+
+  @@map("code_submission")
+}
+
+model language {
+  id               Int      @id @default(autoincrement())
+  name             String   @unique
+  judge0_id        Int?     // ID in Judge0 system (e.g., 63 for JavaScript, 71 for Python)
+  compile_cmd      String?
+  run_cmd          String?
+  boilerplate_code String?  // Generic boilerplate for this language
+  driver_code      String?  // Generic driver code for this language
+  created_at       DateTime @default(now())
+
+  problem_templates coding_problem_template[]
+  test_coding_submissions test_coding_submission[]
+
+  @@map("language")
+}
+
+model coding_problem_template {
+  id              Int      @id @default(autoincrement())
+  problem_id      Int
+  language_id     Int
+  boilerplate_code String?
+  driver_code     String?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  problem  coding_problem @relation(fields: [problem_id], references: [id], onDelete: Cascade)
+  language language      @relation(fields: [language_id], references: [id], onDelete: Cascade)
+
+  @@unique([problem_id, language_id])
+  @@map("coding_problem_template")
+}
+
+enum TestCaseType {
+  VISIBLE
+  HIDDEN
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+// ====================================================================================
+// ENVIRONMENT 2 — CURRICULUM / ROADMAP PLATFORM
+// Tables: Roadmap, RoadmapSection, RoadmapSectionCourse, Course, Module, SubModule,
+//         ProblemSet, ProblemSetItem, ProblemSetSubModule, cc_problem, CcProblemAttempt,
+//         StudentCourseEnrollment, TeacherCourseEnrollment, AdminCourseEnrollment,
+//         Student/Teacher/AdminModuleProgress, Student/Teacher/AdminSubModuleProgress
+// These tables are NEVER used by the Coding/Exam environment.
+// cc_problem is the ONLY problem table here — coding_problem NEVER appears here.
+// ====================================================================================
+
+model Roadmap {
+  id               Int             @id
+  slug             String
+  name             String
+  description      String
+  outcomes         String
+  timeToComplete   String
+  createdAt        DateTime
+  updatedAt        DateTime
+  sections         RoadmapSection[]
+
+  @@map("roadmaps")
+}
+
+model RoadmapSection {
+  id          Int                  @id
+  roadmapId   Int
+  name        String
+  description String
+  orderIndex  Int
+  roadmap     Roadmap              @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  courses     RoadmapSectionCourse[]
+
+  @@index([roadmapId])
+  @@map("roadmap_section")
+}
+
+model RoadmapSectionCourse {
+  id        Int           @id
+  sectionId Int
+  courseId  Int
+  orderIndex Int
+
+  section   RoadmapSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  course    Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([sectionId, courseId])
+  @@index([courseId])
+  @@map("roadmap_section_course")
+}
+
+model Course {
+  id              Int                   @id
+  slug            String                @unique
+  title           String
+  description     String
+  level           CourseLevel
+  isPracticePath  Boolean               @default(false)
+  timeToComplete  String
+  difficultyRange String
+  rating          Float
+  createdAt       DateTime
+  updatedAt       DateTime
+  modules         Module[]
+  roadmapSections RoadmapSectionCourse[]
+  studentEnrollments StudentCourseEnrollment[]
+  teacherEnrollments TeacherCourseEnrollment[]
+  adminEnrollments   AdminCourseEnrollment[]
+
+  @@map("course")
+}
+
+model Module {
+  id           Int        @id
+  courseId     Int
+  name         String
+  description  String
+  orderIndex   Int
+  assessmentId String?
+
+  course       Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  submodules   SubModule[]
+  assessment   ProblemSet? @relation("ModuleAssessment", fields: [assessmentId], references: [code], onDelete: SetNull)
+  studentProgress StudentModuleProgress[]
+  teacherProgress TeacherModuleProgress[]
+  adminProgress   AdminModuleProgress[]
+
+  @@index([courseId])
+  @@map("module")
+}
+
+model SubModule {
+  id             Int                   @id
+  moduleId       Int
+  name           String
+  type           SubModuleType
+  orderIndex     Int
+
+  module         Module                @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  problemSetLinks ProblemSetSubModule[]
+  studentProgress StudentSubModuleProgress[]
+  teacherProgress TeacherSubModuleProgress[]
+  adminProgress   AdminSubModuleProgress[]
+
+  @@index([moduleId])
+  @@map("submodule")
+}
+
+model ProblemSet {
+  code            String             @id
+  name            String
+  type            SetType
+  description     String
+  durationMinutes Int
+  problems        ProblemSetItem[]
+  submoduleLinks  ProblemSetSubModule[]
+  moduleAssessments Module[]         @relation("ModuleAssessment")
+
+  @@map("problem_set")
+}
+
+model ProblemSetItem {
+  id             Int        @id @default(autoincrement())
+  problemSetCode String
+  problemId      Int
+  orderIndex     Int
+
+  problemSet     ProblemSet @relation(fields: [problemSetCode], references: [code], onDelete: Cascade)
+  problem        cc_problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@unique([problemSetCode, problemId])
+  @@index([problemId])
+  @@map("problem_set_item")
+}
+
+model ProblemSetSubModule {
+  id             Int      @id @default(autoincrement())
+  problemSetCode String
+  subModuleId    Int
+
+  problemSet     ProblemSet @relation(fields: [problemSetCode], references: [code], onDelete: Cascade)
+  submodule      SubModule  @relation(fields: [subModuleId], references: [id], onDelete: Cascade)
+
+  @@unique([problemSetCode, subModuleId])
+  @@index([subModuleId])
+  @@map("problem_set_submodule")
+}
+
+enum CourseLevel {
+  BEGINNER     @map("Beginner")
+  INTERMEDIATE @map("Intermediate")
+  ADVANCED     @map("Advanced")
+}
+
+enum SubModuleType {
+  CONCEPT  @map("concept")
+  PRACTICE @map("practice")
+}
+
+// ==================== CURRICULUM CONTENT (CC) MODELS ====================
+// These models are SEPARATE from college coding_problem / tests.
+// Used for FCC-imported or platform-created learning content.
+
+
+enum CcProblemType {
+  CODING
+  MCQ
+  SUBJECTIVE
+}
+
+model cc_problem {
+  id             Int           @id @default(autoincrement())
+  code           String        @unique  // e.g. FCC challenge id or custom code
+  name           String
+  slug           String        @unique
+  body           String        @db.Text
+  type           CcProblemType @default(CODING)
+  difficulty     Difficulty    @default(EASY)
+  author         String?       @default("freeCodeCamp")
+
+  // External source tracking
+  externalSource String?       // e.g. "FCC"
+  externalId     String?       // original id in external system
+
+  // Rich content
+  maxScore       Int           @default(0)
+  tags           Json?         // String[] stored as JSON
+  mcqOptions     Json?         // For MCQ type: { options, correctIndex }
+  codingConfig   Json?         // For CODING type: { tests, solutions, challengeType }
+  videoUrl       String?
+  editorialUrl   String?
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  problemSetItems ProblemSetItem[]
+  attempts        CcProblemAttempt[]
+
+  @@index([externalSource, externalId])
+  @@map("cc_problem")
+}
+
+model CcProblemAttempt {
+  id         Int              @id @default(autoincrement())
+  problemId  Int
+  // Polymorphic: one of student/teacher/admin
+  studentId  Int?
+  teacherId  Int?
+  adminId    Int?
+
+  status     CcAttemptStatus  @default(ATTEMPTED)
+  code       String?          @db.Text  // submitted code (if CODING)
+  language   String?
+  score      Float            @default(0)
+  submittedAt DateTime        @default(now())
+
+  problem    cc_problem        @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  student    student_profile?  @relation("StudentCcAttempts", fields: [studentId], references: [id], onDelete: Cascade)
+  teacher    teacher_profile?  @relation("TeacherCcAttempts", fields: [teacherId], references: [id], onDelete: Cascade)
+  admin      org_admin_profile? @relation("AdminCcAttempts", fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([problemId])
+  @@index([studentId])
+  @@index([teacherId])
+  @@index([adminId])
+  @@map("cc_problem_attempt")
+}
+
+enum CcAttemptStatus {
+  SOLVED
+  ATTEMPTED
+  FAILED
+}
+
+enum SetType {
+  PRACTICE   @map("practice")
+  CONTEST    @map("contest")
+  ASSESSMENT @map("assessment")
+}
+
+enum CourseEnrollmentStatus {
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
+model StudentCourseEnrollment {
+  id        Int                  @id @default(autoincrement())
+  studentId Int
+  courseId  Int
+  status    CourseEnrollmentStatus @default(ACTIVE)
+  joinedAt  DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+
+  student   student_profile      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course    Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId])
+  @@index([courseId])
+  @@map("student_course_enrollment")
+}
+
+model TeacherCourseEnrollment {
+  id        Int                  @id @default(autoincrement())
+  teacherId Int
+  courseId  Int
+  status    CourseEnrollmentStatus @default(ACTIVE)
+  joinedAt  DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+
+  teacher   teacher_profile      @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  course    Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([teacherId, courseId])
+  @@index([courseId])
+  @@map("teacher_course_enrollment")
+}
+
+model AdminCourseEnrollment {
+  id        Int                  @id @default(autoincrement())
+  adminId   Int
+  courseId  Int
+  status    CourseEnrollmentStatus @default(ACTIVE)
+  joinedAt  DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+
+  admin     org_admin_profile    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  course    Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([adminId, courseId])
+  @@index([courseId])
+  @@map("admin_course_enrollment")
+}
+
+model StudentModuleProgress {
+  id          Int             @id @default(autoincrement())
+  studentId   Int
+  moduleId    Int
+  isCompleted Boolean         @default(false)
+  updatedAt   DateTime        @updatedAt
+
+  student     student_profile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  module      Module          @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, moduleId])
+  @@index([moduleId])
+  @@map("student_module_progress")
+}
+
+model TeacherModuleProgress {
+  id          Int             @id @default(autoincrement())
+  teacherId   Int
+  moduleId    Int
+  isCompleted Boolean         @default(false)
+  updatedAt   DateTime        @updatedAt
+
+  teacher     teacher_profile @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  module      Module          @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@unique([teacherId, moduleId])
+  @@index([moduleId])
+  @@map("teacher_module_progress")
+}
+
+model AdminModuleProgress {
+  id          Int             @id @default(autoincrement())
+  adminId     Int
+  moduleId    Int
+  isCompleted Boolean         @default(false)
+  updatedAt   DateTime        @updatedAt
+
+  admin       org_admin_profile @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  module      Module          @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@unique([adminId, moduleId])
+  @@index([moduleId])
+  @@map("admin_module_progress")
+}
+
+model StudentSubModuleProgress {
+  id          Int             @id @default(autoincrement())
+  studentId   Int
+  subModuleId Int
+  isCompleted Boolean         @default(false)
+  updatedAt   DateTime        @updatedAt
+
+  student     student_profile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  submodule   SubModule       @relation(fields: [subModuleId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, subModuleId])
+  @@index([subModuleId])
+  @@map("student_submodule_progress")
+}
+
+model TeacherSubModuleProgress {
+  id          Int             @id @default(autoincrement())
+  teacherId   Int
+  subModuleId Int
+  isCompleted Boolean         @default(false)
+  updatedAt   DateTime        @updatedAt
+
+  teacher     teacher_profile @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  submodule   SubModule       @relation(fields: [subModuleId], references: [id], onDelete: Cascade)
+
+  @@unique([teacherId, subModuleId])
+  @@index([subModuleId])
+  @@map("teacher_submodule_progress")
+}
+
+model AdminSubModuleProgress {
+  id          Int             @id @default(autoincrement())
+  adminId     Int
+  subModuleId Int
+  isCompleted Boolean         @default(false)
+  updatedAt   DateTime        @updatedAt
+
+  admin       org_admin_profile @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  submodule   SubModule       @relation(fields: [subModuleId], references: [id], onDelete: Cascade)
+
+  @@unique([adminId, subModuleId])
+  @@index([subModuleId])
+  @@map("admin_submodule_progress")
+}
