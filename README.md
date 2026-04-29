@@ -1,114 +1,105 @@
 <div align="center">
 
-<a href="https://github.com/ExplorerAditya">
-  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=26&duration=3000&pause=900&color=DC2626&center=true&vCenter=true&width=720&lines=%24+whoami;Aditya+Singh+%2F%2F+Security+%2B+AI;HTB+%231+University+%C2%B7+%232+India+%C2%B7+%2311+Global;Building+systems+attackers+can%27t+walk+around." alt="typing"/>
-</a>
-
-<br/>
-
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0F172A,50:991B1B,100:DC2626&height=120&section=header&fontSize=0&animation=fadeIn"/>
+<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=400&size=14&duration=2400&pause=600&color=999999&center=true&vCenter=true&width=560&lines=initializing+session...;loading+modules...+%5Bok%5D;authenticating+aditya_singh...+%5Bok%5D;ready." alt="boot"/>
 
 </div>
 
----
+<br/>
 
-```bash
-$ cat ~/.profile
+```
+┌─ aditya singh ──────────────────────────────────────────────┐
+│                                                             │
+│   security engineer · ai researcher · india                 │
+│   cse @ galgotias university · 2022 — 2026                  │
+│                                                             │
+│   ● currently   cybersecurity analyst @ eazypetition        │
+│   ● researching multi-modal phishing detection              │
+│   ● shipping    cyberx — bert + url + dom fusion            │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
 
->  Aditya Singh
->  21 · India · he/him
->  CSE @ Galgotias University · CGPA 8.4 · class of 2026
->  Currently:    Cybersecurity Analyst Intern @ eazyPetition LLC
->  Researching:  multi-modal phishing detection, adversarial ML
->  Stack:        python · pytorch · transformers · flask · sql · linux
->  Tools:        nmap · wireshark · tcpdump · burp · snyk · kali
->  Mantra:       break things on purpose, fix them on principle.
+<br/>
+
+```
+$ ./build.sh
+   resolving dependencies          ●●●●●●●●●●  done
+   compiling experience            ●●●●●●●●●●  done
+   linking projects                ●●●●●●●●●●  done
+   running tests                   ●●●●●●●●●●  passed
+   deploy                          ●●●●●●●●●●  ready
 ```
 
 ---
 
-### 🏆 Selected achievements
+### selected work
 
-- 🥇 **Hack The Box Global CTF** — Ranked **1st (University)**, **2nd (India)**, **11th (Global)** &nbsp;[[announcement](https://www.linkedin.com/posts/galgotiasuniversity_galgotias-galgotia-galgotiasuniversity-activity-7452222947605282816-ZiKb)]
-- 🛡 **TryHackMe** — **Top 15% globally**, **50+ rooms**, 5 badges &nbsp;[[profile](https://tryhackme.com/p/TryHackExplorer)]
-- 🤝 **CyberPeace Corps** — Volunteer at **Global CyberPeace Summit 2.0**, Bharat Mandapam &nbsp;[[recap](https://www.linkedin.com/posts/aditya-singh-explorer_cyberpeacesummit-trustandsafety-cybersecurity-activity-7427260784839217152-OAO7)]
-- 🎤 **Cybersecurity awareness sessions** — NSS Camps, Community sessions, Internship sessions &nbsp;[[talk on YouTube](https://www.youtube.com/watch?v=UVJQDhOnZ2Y)]
-- 💻 **Competitive programming** — 500+ DSA problems across LeetCode / GFG / HackerRank
-- 🌍 **Model UN** — policy and negotiation rounds &nbsp;[[recap](https://www.linkedin.com/posts/aditya-singh-explorer_galgotiasuniversity-unitednation-unsdg-activity-7401956359199457280-cPI2)]
+```
+[1]  cyberx                          multi-modal phishing detection
+     bert + url + dom · 97.60% acc · 97.33% recall · 0.998 auc
+     ↳ live   https://cyberx-fwu0.onrender.com
+     ↳ code   https://github.com/ExplorerAditya/cyberX
+     ↳ paper  galgotias university · 2026
 
----
+[2]  digital-signature-verification  ecdsa · django · postgresql
+     ↳ code   https://github.com/ExplorerAditya/Digital-Signature-Verification-System
 
-### 🛠 Arsenal
-
-<p align="left">
-  <img src="https://img.shields.io/badge/-Python-0F172A?style=flat-square&logo=python&logoColor=DC2626"/>
-  <img src="https://img.shields.io/badge/-Java-0F172A?style=flat-square&logo=openjdk&logoColor=DC2626"/>
-  <img src="https://img.shields.io/badge/-SQL-0F172A?style=flat-square&logo=mysql&logoColor=DC2626"/>
-  <img src="https://img.shields.io/badge/-JavaScript-0F172A?style=flat-square&logo=javascript&logoColor=DC2626"/>
-  <img src="https://img.shields.io/badge/-PyTorch-0F172A?style=flat-square&logo=pytorch&logoColor=DC2626"/>
-  <img src="https://img.shields.io/badge/-HuggingFace-0F172A?style=flat-square&logo=huggingface&logoColor=DC2626"/>
-  <img src="https://img.shields.io/badge/-scikit--learn-0F172A?style=flat-square&logo=scikit-learn&logoColor=DC2626"/>
-  <img src="https://img.shields.io/badge/-Flask-0F172A?style=flat-square&logo=flask&logoColor=DC2626"/>
-</p>
-
-<p align="left">
-  <img src="https://img.shields.io/badge/-Kali%20Linux-0F172A?style=flat-square&logo=kalilinux&logoColor=DC2626"/>
-  <img src="https://img.shields.io/badge/-Wireshark-0F172A?style=flat-square&logo=wireshark&logoColor=DC2626"/>
-  <img src="https://img.shields.io/badge/-Burp%20Suite-0F172A?style=flat-square&logo=burpsuite&logoColor=DC2626"/>
-  <img src="https://img.shields.io/badge/-Nmap-0F172A?style=flat-square&logo=gnu&logoColor=DC2626"/>
-  <img src="https://img.shields.io/badge/-Snyk-0F172A?style=flat-square&logo=snyk&logoColor=DC2626"/>
-  <img src="https://img.shields.io/badge/-Cisco%20PT-0F172A?style=flat-square&logo=cisco&logoColor=DC2626"/>
-  <img src="https://img.shields.io/badge/-Windows%20AD-0F172A?style=flat-square&logo=windows&logoColor=DC2626"/>
-  <img src="https://img.shields.io/badge/-Git-0F172A?style=flat-square&logo=git&logoColor=DC2626"/>
-</p>
-
-<p align="left">
-  <strong>Frameworks · Standards:</strong>
-  <img src="https://img.shields.io/badge/-NIST-991B1B?style=flat-square&logoColor=white"/>
-  <img src="https://img.shields.io/badge/-ISO%2027001-991B1B?style=flat-square&logoColor=white"/>
-  <img src="https://img.shields.io/badge/-SOC%202-991B1B?style=flat-square&logoColor=white"/>
-  <img src="https://img.shields.io/badge/-OWASP-991B1B?style=flat-square&logoColor=white"/>
-  <img src="https://img.shields.io/badge/-MITRE%20ATT%26CK-991B1B?style=flat-square&logoColor=white"/>
-</p>
+[3]  sorting-visualizer              algorithm playground
+     ↳ code   https://github.com/ExplorerAditya/Sorting-Visualizer
+```
 
 ---
 
-### 📜 Certifications
+### track record
 
-- 🛡️ **[Pre Security](https://tryhackme-certificates.s3-eu-west-1.amazonaws.com/THM-JC0GVZSCGK.pdf)** — TryHackMe · 2026
-- 🛡️ **[Junior Cybersecurity Analyst](https://www.credly.com/earner/earned/badge/19295bf4-6d60-41f2-b7e6-634f3c391257)** — Cisco · 2026
-- 🌐 **[CCNA: Introduction to Networks](https://www.credly.com/badges/7711ce57-8059-4919-b94e-6cc9517e6178/linked_in_profile)** — Cisco · 2025
-- 💻 **[Meta Front-End Developer](https://www.coursera.org/account/accomplishments/specialization/LZ62Z2F47XXO)** — Coursera · 2025
-- 🗄️ **[SQL for Data Science](https://www.coursera.org/account/accomplishments/verify/NYZZ4D6WYQGV)** — UC Davis · 2024
-
----
-
-### 🔗 Links
-
-<a href="https://www.linkedin.com/in/aditya-singh-explorer/"><img src="https://img.shields.io/badge/-LinkedIn-0F172A?style=for-the-badge&logo=linkedin&logoColor=DC2626"/></a>
-<a href="https://tryhackme.com/p/TryHackExplorer"><img src="https://img.shields.io/badge/-TryHackMe-0F172A?style=for-the-badge&logo=tryhackme&logoColor=DC2626"/></a>
-<a href="https://www.credly.com/users/aditya-singh-explorer/badges"><img src="https://img.shields.io/badge/-Credly-0F172A?style=for-the-badge&logo=credly&logoColor=DC2626"/></a>
-<a href="https://www.youtube.com/channel/UC1CcQ_uNab9VXCxqZiurNZg"><img src="https://img.shields.io/badge/-Hack%20with%20Explorer-0F172A?style=for-the-badge&logo=youtube&logoColor=DC2626"/></a>
-<a href="https://codolio.com/profile/%40Explorer"><img src="https://img.shields.io/badge/-Codolio-0F172A?style=for-the-badge&logo=codeforces&logoColor=DC2626"/></a>
-<a href="mailto:adityasingh.privatemail@gmail.com"><img src="https://img.shields.io/badge/-Email-0F172A?style=for-the-badge&logo=gmail&logoColor=DC2626"/></a>
+```
+●  hack the box global ctf      1st university · 2nd india · 11th global
+●  tryhackme                    top 15% globally · 50+ rooms · 5 badges
+●  cyberpeace summit 2.0        corps volunteer · bharat mandapam
+●  awareness sessions           nss camps · community · internship talks
+●  competitive programming      500+ problems · leetcode · gfg · hackerrank
+●  model un                     policy & negotiation rounds
+```
 
 ---
 
-### 🎯 Featured project — **CYBERX**
+### stack
 
-> **A hybrid multi-modal framework for phishing detection using BERT, URL analysis, and HTML structural features.**
->
-> Single-modality filters get bypassed when attackers mutate channels. CYBERX fuses three signals — email semantics, URL features, and DOM structure — inside one trained network.
+```
+languages    python   java   sql   javascript
+ml           pytorch  transformers  scikit-learn  flask
+security     kali     wireshark  nmap  tcpdump  burp  snyk
+platforms    linux    windows ad  cisco pt  git
+frameworks   nist     iso 27001  soc 2  owasp  mitre att&ck
+```
 
-| Metric | Score |
-|---|---|
-| Accuracy | **97.60 %** |
-| Recall | **97.33 %** *(+3.73 pts over standalone BERT)* |
-| ROC-AUC | **0.998** |
-| Architecture | BERT [CLS] + 35 URL features + 24 HTML/DOM features → fusion network |
+---
 
-🔗 **[Live demo](https://cyberx.onrender.com)** &nbsp;·&nbsp; 📦 **[Source](https://github.com/ExplorerAditya/cyberX)** &nbsp;·&nbsp; 📄 Co-authored research paper *(Galgotias University, 2026)*
+### certifications
+
+```
+●  pre security                  tryhackme · 2026     →  https://tryhackme-certificates.s3-eu-west-1.amazonaws.com/THM-JC0GVZSCGK.pdf
+●  junior cybersecurity analyst  cisco · 2026         →  https://www.credly.com/earner/earned/badge/19295bf4-6d60-41f2-b7e6-634f3c391257
+●  ccna intro to networks        cisco · 2025         →  https://www.credly.com/badges/7711ce57-8059-4919-b94e-6cc9517e6178/linked_in_profile
+●  meta front-end developer      coursera · 2025      →  https://www.coursera.org/account/accomplishments/specialization/LZ62Z2F47XXO
+●  sql for data science          uc davis · 2024      →  https://www.coursera.org/account/accomplishments/verify/NYZZ4D6WYQGV
+```
+
+---
+
+### endpoints
+
+```
+linkedin    →  https://linkedin.com/in/aditya-singh-explorer
+tryhackme   →  https://tryhackme.com/p/TryHackExplorer
+youtube     →  https://youtube.com/channel/UC1CcQ_uNab9VXCxqZiurNZg
+credly      →  https://credly.com/users/aditya-singh-explorer/badges
+codolio     →  https://codolio.com/profile/@Explorer
+email       →  adityasingh.privatemail@gmail.com
+```
 
 ---
 
 <div align="center">
+<sub><code>// end of stream</code></sub>
+</div>
