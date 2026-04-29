@@ -27,23 +27,6 @@ $ cat ~/.profile
 
 ---
 
-### 🎯 Featured project — **CYBERX**
-
-> **A hybrid multi-modal framework for phishing detection using BERT, URL analysis, and HTML structural features.**
->
-> Single-modality filters get bypassed when attackers mutate channels. CYBERX fuses three signals — email semantics, URL features, and DOM structure — inside one trained network.
-
-| Metric | Score |
-|---|---|
-| Accuracy | **97.60 %** |
-| Recall | **97.33 %** *(+3.73 pts over standalone BERT)* |
-| ROC-AUC | **0.998** |
-| Architecture | BERT [CLS] + 35 URL features + 24 HTML/DOM features → fusion network |
-
-🔗 **[Live demo](https://cyberx.onrender.com)** &nbsp;·&nbsp; 📦 **[Source](https://github.com/ExplorerAditya/cyberX)** &nbsp;·&nbsp; 📄 Co-authored research paper *(Galgotias University, 2026)*
-
----
-
 ### 🏆 Selected achievements
 
 - 🥇 **Hack The Box Global CTF** — Ranked **1st (University)**, **2nd (India)**, **11th (Global)** &nbsp;[[announcement](https://www.linkedin.com/posts/galgotiasuniversity_galgotias-galgotia-galgotiasuniversity-activity-7452222947605282816-ZiKb)]
@@ -100,27 +83,6 @@ $ cat ~/.profile
 
 ---
 
-### 📡 GitHub stats
-
-<table>
-<tr>
-<td>
-
-<img src="https://github-readme-stats.vercel.app/api?username=ExplorerAditya&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0F172A&title_color=DC2626&icon_color=DC2626&text_color=E2E8F0&ring_color=DC2626"/>
-
-</td>
-<td>
-
-<img src="https://github-readme-streak-stats.herokuapp.com/?user=ExplorerAditya&theme=tokyonight&hide_border=true&background=0F172A&stroke=DC2626&ring=DC2626&fire=DC2626&currStreakLabel=DC2626"/>
-
-</td>
-</tr>
-</table>
-
-<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=ExplorerAditya&layout=compact&theme=tokyonight&hide_border=true&bg_color=0F172A&title_color=DC2626&text_color=E2E8F0&langs_count=8"/>
-
----
-
 ### 🔗 Links
 
 <a href="https://www.linkedin.com/in/aditya-singh-explorer/"><img src="https://img.shields.io/badge/-LinkedIn-0F172A?style=for-the-badge&logo=linkedin&logoColor=DC2626"/></a>
@@ -129,6 +91,23 @@ $ cat ~/.profile
 <a href="https://www.youtube.com/channel/UC1CcQ_uNab9VXCxqZiurNZg"><img src="https://img.shields.io/badge/-Hack%20with%20Explorer-0F172A?style=for-the-badge&logo=youtube&logoColor=DC2626"/></a>
 <a href="https://codolio.com/profile/%40Explorer"><img src="https://img.shields.io/badge/-Codolio-0F172A?style=for-the-badge&logo=codeforces&logoColor=DC2626"/></a>
 <a href="mailto:adityasingh.privatemail@gmail.com"><img src="https://img.shields.io/badge/-Email-0F172A?style=for-the-badge&logo=gmail&logoColor=DC2626"/></a>
+
+---
+
+### 🎯 Featured project — **CYBERX**
+
+> **A hybrid multi-modal framework for phishing detection using BERT, URL analysis, and HTML structural features.**
+>
+> Single-modality filters get bypassed when attackers mutate channels. CYBERX fuses three signals — email semantics, URL features, and DOM structure — inside one trained network.
+
+| Metric | Score |
+|---|---|
+| Accuracy | **97.60 %** |
+| Recall | **97.33 %** *(+3.73 pts over standalone BERT)* |
+| ROC-AUC | **0.998** |
+| Architecture | BERT [CLS] + 35 URL features + 24 HTML/DOM features → fusion network |
+
+🔗 **[Live demo](https://cyberx.onrender.com)** &nbsp;·&nbsp; 📦 **[Source](https://github.com/ExplorerAditya/cyberX)** &nbsp;·&nbsp; 📄 Co-authored research paper *(Galgotias University, 2026)*
 
 ---
 
