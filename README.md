@@ -128,22 +128,34 @@ root@explorer:~$ _
 
 ```
 ─── languages ────────────────────────────────────────────────────────────
-   python ███████████████████░  java ████████████░  sql ██████████████░
-   javascript ██████████░
+
+   python          · ∙ • ● ● ● ● ● ● ●     advanced
+   java            · ∙ • ● ● ● ●  ∙  ∙  ∙   intermediate
+   sql             · ∙ • ● ● ● ● ●  ∙  ∙    proficient
+   javascript      · ∙ • ● ● ●  ∙  ∙  ∙  ∙   working
 
 ─── ai · ml ──────────────────────────────────────────────────────────────
-   pytorch ████████████████░  transformers ███████████████░
-   scikit-learn ██████████████░  flask █████████████░
+
+   pytorch         · ∙ • ● ● ● ● ● ●  ∙     advanced
+   transformers    · ∙ • ● ● ● ● ● ●  ∙     advanced
+   scikit-learn    · ∙ • ● ● ● ● ● ●  ∙     advanced
+   flask           · ∙ • ● ● ● ● ●  ∙  ∙    proficient
 
 ─── offensive · defensive ────────────────────────────────────────────────
-   kali linux ████████████████░  burp suite ███████████████░
-   wireshark ████████████████░  nmap ██████████████████░
-   tcpdump ████████████░  snyk ███████████░
+
+   kali linux      · ∙ • ● ● ● ● ● ●  ∙     advanced
+   burp suite      · ∙ • ● ● ● ● ●  ∙  ∙    proficient
+   wireshark       · ∙ • ● ● ● ● ● ●  ∙     advanced
+   nmap            · ∙ • ● ● ● ● ● ● ●      expert
+   tcpdump         · ∙ • ● ● ● ●  ∙  ∙  ∙   intermediate
+   snyk            · ∙ • ● ● ● ●  ∙  ∙  ∙   intermediate
 
 ─── platforms ────────────────────────────────────────────────────────────
+
    linux  ·  windows ad  ·  cisco packet tracer  ·  git  ·  docker
 
 ─── governance · compliance ──────────────────────────────────────────────
+
    nist  ·  iso 27001  ·  soc 2  ·  owasp top 10  ·  mitre att&ck
 ```
 
